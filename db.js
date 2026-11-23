@@ -1,14 +1,13 @@
 
 const mysql = require('mysql2/promise');
-const fs = require('node:fs');
-const path = require('node:path');
 
 const chaves = [
     'DB_HOST',
     'DB_PORT',
     'DB_USER',
     'DB_PASSWORD',
-    'DB_NAME'
+    'DB_NAME',
+    'DB_CA_BASE64'
 ];
 
 const faltantes = chaves.filter(
@@ -21,9 +20,10 @@ if (faltantes.length > 0) {
     );
 }
 
-const certificado = fs.readFileSync(
-    path.join(__dirname, 'ca (1).pem')
-);
+const certificado = Buffer.from(
+    process.env.DB_CA_BASE64,
+    'base64'
+).toString('utf8');
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
